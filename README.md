@@ -2,14 +2,15 @@
 
 Just download the file `confluence.lua` and put it in a convenient location. Pandoc includes a lua interpreter, so lua need not be installed separately. You need at least Pandoc version 1.13, released August 2014 (this release adds --template support for custom writers).
 
+Make sure confluence has the [Confluence Source Editor](https://marketplace.atlassian.com/apps/1210722/confluence-source-editor?hosting=server&tab=overview) plugin installed, so that the output of the conversion can be used.
+
 # Usage
 
-To convert the markdown file example1.md into the JATS XML file example1.xml, use the following command:
+To convert the markdown file example1.md into the confluence storage format, use the following command:
 
-`$ pandoc -v`
+`$ pandoc example1.md -t path-to/pandoc-confluence-writer/confluence.lua -o confluence-out.xhtml`
 
-then copy wiki.put the file in that directory\templates\default.confluence.lua
-
+Then edit the confluence page, click the `< >` button in the top right, and paste the contents of `confluence-out.xhtml` into the window.
 
 ### NOTES
 
