@@ -89,7 +89,8 @@ function Doc(body, metadata, variables)
     text-align: center;
 }]] ..
     "</style>]]></ac:plain-text-body></ac:structured-macro>"
-  add(css_style)
+  -- Disable the css as we html macro is disabled by default in confluence
+  -- add(css_style)
   add(body)
   if #notes > 0 then
     add('<ol class="footnotes">')
