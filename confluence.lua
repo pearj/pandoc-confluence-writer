@@ -259,10 +259,14 @@ function CodeBlock(s, attr)
     local png = pipe("base64", pipe("dot -Tpng", s))
     return '<img src="data:image/png;base64,' .. png .. '"/>'
   else
+    local lang = ""
+    if attr.class and string.len(attr.class) > 0 then
+      lang = '<ac:parameter ac:name="language">' .. attr.class ..
+      '</ac:parameter>'
+    end
     return '<ac:structured-macro ac:macro-id="761760bb-a501-4b9f-9b5e-f7ebf7e1ab21" ' ..
                     'ac:name="code" ac:schema-version="1">' ..
-                '<ac:parameter ac:name="language">' .. attr.class ..
-       '</ac:parameter>' ..
+                lang ..
                 '<ac:plain-text-body><![CDATA[' ..
        s ..']]></ac:plain-text-body>' ..
             '</ac:structured-macro>'
