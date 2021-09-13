@@ -258,6 +258,21 @@ function CodeBlock(s, attr)
     -- otherwise treat as code (one could pipe through a highlighter)
     local png = pipe("base64", pipe("dot -Tpng", s))
     return '<img src="data:image/png;base64,' .. png .. '"/>'
+  elseif attr.class and string.match(" " .. attr.class .. " ", " plantuml ") then
+    return '<ac:structured-macro ac:macro-id="01c70d21-0921-4b37-b0d0-046211d07a6f" ' ..
+                    'ac:name="plantuml" ac:schema-version="1">' ..
+                '<ac:parameter ac:name="atlassian-macro-output-type">INLINE</ac:parameter>' ..
+                '<ac:plain-text-body><![CDATA[' ..
+       s ..']]></ac:plain-text-body>' ..
+            '</ac:structured-macro>'
+  elseif attr.class and string.match(" " .. attr.class .. " ", " confluencetoc ") then
+    return [[<ac:structured-macro ac:macro-id="4a81f282-4245-4d26-af33-7593947574bd" ac:name="toc-zone" ac:schema-version="1">
+    <ac:rich-text-body>
+      <p>
+        <ac:structured-macro ac:macro-id="767ec61c-0e3c-4336-8d0b-0ac50b223c5f" ac:name="toc" ac:schema-version="1"/>
+      </p>
+    </ac:rich-text-body>
+  </ac:structured-macro>]]
   else
     local lang = ""
     if attr.class and string.len(attr.class) > 0 then
