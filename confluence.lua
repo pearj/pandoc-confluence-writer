@@ -59,6 +59,10 @@ local function pipe(cmd, inp)
   return result
 end
 
+local function starts_with(str, start)
+  return str:sub(1, #start) == start
+end
+
 -- Table to store footnotes, so they can be included at the end.
 local notes = {}
 
@@ -168,7 +172,11 @@ function Image(s, src, tit, attr)
 end
 
 function Code(s, attr)
-  return "<code" .. attributes(attr) .. ">" .. escape(s) .. "</code>"
+  if s and starts_with(s, "[raw]") then
+    return string.sub(s, 6)
+  else
+    return "<code" .. attributes(attr) .. ">" .. escape(s) .. "</code>"
+  end
 end
 
 function InlineMath(s)
@@ -260,6 +268,8 @@ function CodeBlock(s, attr)
     -- otherwise treat as code (one could pipe through a highlighter)
     local png = pipe("base64", pipe("dot -Tpng", s))
     return '<img src="data:image/png;base64,' .. png .. '"/>'
+  elseif attr.class and string.match(" " .. attr.class .. " ", " raw ") then
+    return s
   elseif attr.class and string.match(" " .. attr.class .. " ", " plantuml ") then
     return '<ac:structured-macro ac:macro-id="01c70d21-0921-4b37-b0d0-046211d07a6f" ' ..
                     'ac:name="plantuml" ac:schema-version="1">' ..
@@ -290,12 +300,34 @@ function CodeBlock(s, attr)
   end
 end
 
-function BulletList(items)
+local function RenderTaskList(items)
   local buffer = {}
-  for _, item in pairs(items) do
-    table.insert(buffer, "<li>" .. item .. "</li>")
+  local function add(s)
+    table.insert(buffer, s)
   end
-  return "<ul>\n" .. table.concat(buffer, "\n") .. "\n</ul>"
+  add("<ac:task-list>")
+  for idx, item in pairs(items) do
+    add("<ac:task>")
+    add("<ac:task-id>" .. idx .. "</ac:task-id>")
+    
+    add("<ac:task-status>" .. (starts_with(item, "[x]") and "complete" or "incomplete") .. "</ac:task-status>")
+    add("<ac:task-body>" .. string.sub(item, 4) .."</ac:task-body>")
+    add("</ac:task>")
+  end
+  add("</ac:task-list>")
+  return table.concat(buffer, "\n")
+end
+
+function BulletList(items)
+  if starts_with(items[1], "[ ]") or starts_with(items[1], "[x]") then
+    return RenderTaskList(items)
+  else
+    local buffer = {}
+    for _, item in pairs(items) do
+      table.insert(buffer, "<li>" .. item .. "</li>")
+    end
+    return "<ul>\n" .. table.concat(buffer, "\n") .. "\n</ul>"
+  end
 end
 
 function OrderedList(items)
