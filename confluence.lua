@@ -250,7 +250,30 @@ function Header(lev, s, attr)
 end
 
 function BlockQuote(s)
-  return "<blockquote>\n" .. s .. "\n</blockquote>"
+  local warning = "<strong><em>WARNING:</em></strong> "
+  local info = "<strong><em>INFO:</em></strong> "
+  local warningFound = s:find(warning)
+  local infoFound = s:find(info)
+
+  if warningFound == nil and infoFound == nil then
+    return "<blockquote>\n" .. s .. "\n</blockquote>"
+  elseif warningFound ~= nil and warningFound > 0 then
+    return [[
+<ac:structured-macro ac:macro-id="edac4f5a-4d40-42a0-b427-4f509570c8be" ac:name="warning" ac:schema-version="1">
+  <ac:rich-text-body>
+    ]] .. s:gsub(warning,"",1) .. [[ 
+  </ac:rich-text-body>
+</ac:structured-macro>
+    ]]
+  elseif infoFound ~= nil and infoFound > 0 then
+    return [[
+<ac:structured-macro ac:macro-id="df0fb39b-897a-433e-b7f3-bc8f66983eb0" ac:name="info" ac:schema-version="1">
+  <ac:rich-text-body>
+    ]] .. s:gsub(info,"",1) .. [[ 
+  </ac:rich-text-body>
+</ac:structured-macro>
+    ]]
+  end
 end
 
 function HorizontalRule()
