@@ -296,7 +296,7 @@ function CodeBlock(s, attr)
   elseif attr.class and string.match(" " .. attr.class .. " ", " plantuml ") then
     return '<ac:structured-macro ac:macro-id="01c70d21-0921-4b37-b0d0-046211d07a6f" ' ..
                     'ac:name="plantuml" ac:schema-version="1">' ..
-                '<ac:parameter ac:name="atlassian-macro-output-type">INLINE</ac:parameter>' ..
+                '<ac:parameter ac:name="atlassian-macro-output-type">BLOCK</ac:parameter>' ..
                 '<ac:plain-text-body><![CDATA[' ..
        s ..']]></ac:plain-text-body>' ..
             '</ac:structured-macro>'
