@@ -152,6 +152,7 @@ function Strikeout(s)
 end
 
 function Link(s, src, tit, attr)
+  local conf_comment = "confluence-comment:"
   if src and string.sub(src, 1, 11) == "confluence:" then
     -- [Page Link](confluence:SPACE:Content Title)
     for space, page in src:gsub("%%20", " "):gmatch("confluence:(%w+):([%w%s]+)") do
@@ -162,6 +163,8 @@ function Link(s, src, tit, attr)
     return LinkToAnchor(escape(string.sub(src, 2, -1), true), s)
   elseif string.sub(s, 1, 1) == "[" then
     return "<ac:link><ri:page ri:content-title='".. string.sub(s, 2, -2) .."'/></ac:link>"
+  elseif src and string.sub(src, 1, 19) == conf_comment then
+    return '<ac:inline-comment-marker ac:ref="' .. src:sub(20) .. '">' .. s .. '</ac:inline-comment-marker>'
   else
     return "<a href='" .. escape(src, true) .. "' title='" .. escape(tit, true) .. "'>" .. s .. "</a>"
   end
